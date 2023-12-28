@@ -3,9 +3,9 @@ export const Site = {
   // https://docs.astro.build/en/reference/configuration-reference/#site
   deployedUrl: "https://ferrisutanto.com",
 
-  title: "Fer.",
+  title: "Fer_",
 
-  titleTemplate: "%s - Fer.",
+  titleTemplate: "%s - Fer_",
 
   description:
     "Tales from the Adventures of a Self-taught Debugger: Exploring the Digital Wilderness, One Line of Code at a Time",
