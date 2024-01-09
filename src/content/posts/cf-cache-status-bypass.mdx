@@ -5,7 +5,7 @@ publishDate: 2024-01-10
 tags: [nginx, ubuntu, s3, cloudflare]
 ---
 
-I aim to optimize m [NGINX reverse proxy of S3](nginx-reverse-proxy-s3) by incorporating Cloudflare cache. However, despite configuring the specified page rules with Cache Level set to "Cache Everything," Edge Cache TTL set to one month, and Browser Cache TTL set to one year, the issue persists, as evidenced by the `Cf-Cache-Status: BYPASS`
+I aim to optimize [NGINX reverse proxy of S3](nginx-reverse-proxy-s3) by incorporating Cloudflare cache. However, despite configuring the specified page rules with Cache Level set to "Cache Everything," Edge Cache TTL set to one month, and Browser Cache TTL set to one year, the issue persists, as evidenced by the `Cf-Cache-Status: BYPASS`
 
 Upon further investigation, it has come to light that the root cause lies in the Origin Header of the S3, hindering Cloudflare's ability to cache it.
 
