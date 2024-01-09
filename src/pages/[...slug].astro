@@ -4,6 +4,7 @@ import BaseLayout from "@/layouts/base.layout.astro";
 import Time from "@/components/time.component.astro";
 import Tag from "@/components/tag.component.astro";
 import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+import { Image } from "astro:assets";
 
 export const getStaticPaths = (async () => {
   const posts = await getCollection("posts");
@@ -60,7 +61,7 @@ const ogImageUrl = new URL(post.slug + ".png", Astro.url.origin).href;
       </header>
 
       <article class="prose max-w-none dark:prose-invert lg:prose-lg">
-        <Content />
+        <Content components={{ Image }} />
       </article>
     </div>
   </div>

@@ -1,0 +1,56 @@
+---
+title: Fixing Cf-Cache-Status Bypass
+description: "Optimizing Cloudflare Cache for NGINX Reverse Proxy to S3: Resolving Cf-Cache-Status Bypass Issues"
+publishDate: 2024-01-10
+tags: [nginx, ubuntu, s3, cloudflare]
+---
+
+I aim to optimize m [NGINX reverse proxy of S3](nginx-reverse-proxy-s3) by incorporating Cloudflare cache. However, despite configuring the specified page rules with Cache Level set to "Cache Everything," Edge Cache TTL set to one month, and Browser Cache TTL set to one year, the issue persists, as evidenced by the `Cf-Cache-Status: BYPASS`
+
+Upon further investigation, it has come to light that the root cause lies in the Origin Header of the S3, hindering Cloudflare's ability to cache it.
+
+As per the [default cache behaviour docs](https://developers.cloudflare.com/cache/concepts/default-cache-behavior/):
+
+Cloudflare refrains from caching the resource under the following conditions:
+
+- The Cache-Control header is set to private, no-store, no-cache, or max-age=0.
+- The Set-Cookie header exists.
+
+Conversely, Cloudflare caches the resource when:
+
+- The Cache-Control header is set to public and max-age is greater than 0.
+- The Expires header is set to a future date.
+
+An examination of the headers returned from S3 reveals the absence of the `Cache-Control` header, explaining why Cloudflare DOES NOT cache it. The headers are as follows:
+
+```http
+Content-Type: image/jpeg
+Content-Length: 144430
+Connection: keep-alive
+Accept-Ranges: bytes
+Last-Modified: Tue, 30 May 2023 09:55:36 GMT
+x-rgw-object-type: Normal
+ETag: "3c4c8e9c43a1d10e99578545201d1910"
+x-amz-request-id: tx00000d8ec1195814004b5-00659ccdf7-159c04c1-default
+```
+
+To rectify this, you have two options: either utilize the [NGINX reverse proxy of S3](nginx-reverse-proxy-s3) which already includes the required header `add_header Cache-Control max-age=31536000;`, or implement the following rule in Cloudflare Page Rules:
+
+```diff
+Cache Level: Cache Everything
+Edge Cache TTL: a month
+Browser Cache TTL: a year
+
++ Origin Cache Control: OFF
+```
+
+For a more detailed illustration, refer to the provided image.
+
+<Image
+  src={`https://i.imgur.com/a90qFoC.jpg`}
+  alt="CF Cache Page Rules"
+  width="647"
+  height="411"
+/>
+
+With these adjustments, my reverse proxy for S3 will now display `Cf-Cache-Status: HIT`.
